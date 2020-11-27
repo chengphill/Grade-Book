@@ -18,17 +18,16 @@ namespace GradeBook
 
             EnterGrades(book);
 
-            // book.PrintStatistics();
-
             var stats = book.GetStatistics();
 
             PrintStatsMain(book, stats);
+            book.PrintStatistics();
         }
 
         private static void PrintStatsMain(IBook book, Statistics stats)
         {
             System.Console.WriteLine($"\nFor the book named {book.Name}");
-            Console.WriteLine($"Program.cs 22\nThe lowest grade is {stats.Low}");
+            Console.WriteLine($"Program.cs 23->30\nThe lowest grade is {stats.Low}");
             Console.WriteLine($"The highest grade is {stats.High}");
             System.Console.WriteLine($"Average = {stats.Average:N3}");
             Console.WriteLine($"The letter grade is {stats.Letter}");

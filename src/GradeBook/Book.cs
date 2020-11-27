@@ -38,6 +38,15 @@ namespace GradeBook
         public abstract event GradeAddedDelegate GradeAdded;
         public abstract void AddGrade(double grade);
         public abstract Statistics GetStatistics();
+                //test printing method
+        public void PrintStatistics()
+        {
+            var print = this.GetStatistics();
+            Console.WriteLine($"\nMain->Book.cs 24->45\nThe lowest grade is {print.Low}");
+            Console.WriteLine($"The highest grade is {print.High}");
+            System.Console.WriteLine($"Average = {print.Average:N3}");
+
+        }
     }
 
     public class DiskBook : Book
@@ -60,7 +69,7 @@ namespace GradeBook
         public override Statistics GetStatistics()
         {
             var result = new Statistics();
-            
+
             using (var reader = File.OpenText($"{Name}.txt"))
             {
                 var line = reader.ReadLine();
@@ -137,17 +146,6 @@ namespace GradeBook
         }
 
         private List<double> grades;
-
         public const string CATEGORY = "Science";
-
-        //test printing method
-        public void PrintStatistics()
-        {
-            var print = this.GetStatistics();
-            Console.WriteLine($"\nBook.cs 21\nThe lowest grade is {print.Low}");
-            Console.WriteLine($"The highest grade is {print.High}");
-            System.Console.WriteLine($"Average = {print.Average:N3}");
-
-        }
     }
 }
