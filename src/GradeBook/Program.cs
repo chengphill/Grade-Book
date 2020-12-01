@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace GradeBook
 {
@@ -8,7 +10,10 @@ namespace GradeBook
     {
         static void Main(string[] args)
         {
-            var book = new DiskBook("Phil's Grade Book");
+            var name = GetBookName();
+            Console.WriteLine($"Opening: {name}\n");
+
+            var book = new DiskBook(name);
             book.GradeAdded += OnGradeAdded;
 
             static void OnGradeAdded(object sender, EventArgs e)
@@ -24,16 +29,8 @@ namespace GradeBook
             book.PrintStatistics();
         }
 
-        private static void PrintStatsMain(IBook book, Statistics stats)
-        {
-            System.Console.WriteLine($"\nFor the book named {book.Name}");
-            Console.WriteLine($"Program.cs 23->30\nThe lowest grade is {stats.Low}");
-            Console.WriteLine($"The highest grade is {stats.High}");
-            System.Console.WriteLine($"Average = {stats.Average:N3}");
-            Console.WriteLine($"The letter grade is {stats.Letter}");
-        }
 
-        //this could be in a new class
+        //everythin below could be in a seperate classes
         private static void EnterGrades(IBook book)
         {
             while (true)
@@ -65,6 +62,94 @@ namespace GradeBook
                 }
             }
         }
+
+        private static string GetBookName()
+        {
+            while (true)
+            {
+                Console.WriteLine("Press '1' for new gradebook or '2' to load a previous gradebook");
+                var input = Console.ReadLine();
+
+                if (input == "1")
+                {
+                    //Takes user input for new book name, will load existing names too
+                    Console.WriteLine("Enter a new name for gradebook");
+                    var name = Console.ReadLine();
+                    if (File.Exists(name + ".txt"))
+                    {
+                        System.Console.WriteLine("\nFile exists and will now load");
+                    }
+                    if (name == "" || name == null)
+                    {
+                        while (true)
+                        {
+                            System.Console.WriteLine("Invalid name, please enter a new name");
+                            var newName = Console.ReadLine();
+                            if (!String.IsNullOrWhiteSpace(newName))
+                            {
+                                return newName;
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        return name;
+                    }
+                }
+                else if (input == "2")
+                {
+                    //Finds all book names by searching for txt files and displays them to user for them to choose from
+                    Console.WriteLine("Select existing gradebook by pressing the number corresponding to the name on the left");
+                    int count = 0;
+
+                    var sourceDirectory = Directory.GetCurrentDirectory();
+                    var txtFiles = Directory.EnumerateFiles(sourceDirectory, "*.txt", SearchOption.TopDirectoryOnly).Select(x => Path.GetFileName(x)).Select(x => Path.ChangeExtension(x, null)).ToList();
+                    foreach (string file in txtFiles)
+                    {
+                        count++;
+                        Path.ChangeExtension(file, null);
+                        Console.WriteLine($"{count}: {file}");
+                    }
+                    var name = 0;
+                    do
+                    {
+                        count = 0;
+                        var loadName = Console.ReadLine();
+                        name = int.Parse(loadName);
+                        if (name > 0 && name <= txtFiles.Count())
+                        {
+                            return txtFiles[name - 1];
+                        }
+                        else
+                        {
+                            System.Console.WriteLine("Invalid input, try again from list");
+                            foreach (string file in txtFiles)
+                            {
+                                count++;
+                                Path.ChangeExtension(file, null);
+                                Console.WriteLine($"{count}: {file}");
+                            }
+                        }
+                        count = 0;
+                    } while (true);
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input, please try again.\n");
+                }
+            }
+        }
+
+        private static void PrintStatsMain(IBook book, Statistics stats)
+        {
+            System.Console.WriteLine($"\nFor the book named {book.Name}");
+            Console.WriteLine($"Program.cs 23->30\nThe lowest grade is {stats.Low}");
+            Console.WriteLine($"The highest grade is {stats.High}");
+            System.Console.WriteLine($"Average = {stats.Average:N3}");
+            Console.WriteLine($"The letter grade is {stats.Letter}");
+        }
+
     }
 }
 

@@ -38,7 +38,7 @@ namespace GradeBook
         public abstract event GradeAddedDelegate GradeAdded;
         public abstract void AddGrade(double grade);
         public abstract Statistics GetStatistics();
-                //test printing method
+        //test printing method
         public void PrintStatistics()
         {
             var print = this.GetStatistics();
@@ -59,11 +59,19 @@ namespace GradeBook
         {
             using (var writer = File.AppendText($"{Name}.txt"))
             {
-                writer.WriteLine(grade);
-                if (GradeAdded != null)
+                if (grade <= 100.0 && grade >= 0.0)
                 {
-                    GradeAdded(this, new EventArgs());
+                    writer.WriteLine(grade);
+                    if (GradeAdded != null)
+                    {
+                        GradeAdded(this, new EventArgs());
+                    }
                 }
+                else
+                {
+                    throw new ArgumentException($"Invalid {nameof(grade)}");
+                }
+
             }
         }
         public override Statistics GetStatistics()
@@ -118,6 +126,7 @@ namespace GradeBook
         {
             if (grade <= 100.0 && grade >= 0.0)
             {
+                System.Console.WriteLine("Why not working?");
                 grades.Add(grade);
                 if (GradeAdded != null)
                 {
